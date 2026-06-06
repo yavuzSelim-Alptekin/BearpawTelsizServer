@@ -29,7 +29,9 @@ io.on('connection', (socket) => {
         io.emit('receive_message', data);
     });
 
+    // === SES DAĞITIM MOTORU (GARANTİLİ YÖNTEM) ===
     socket.on('audio_stream', (buffer) => {
+        // C#'taki 'AudioPacket' sınıfına tam oturması için nesne yapısını garantiye alıyoruz
         socket.broadcast.emit('audio_receive', {
             senderId: socket.id,
             buffer: buffer
