@@ -1,3 +1,4 @@
+const os = require('os');
 const http = require('http').createServer();
 const io = require('socket.io')(http, {
     cors: { origin: "*" },
@@ -45,10 +46,32 @@ io.on('connection', (socket) => {
     });
 });
 
-// SUNUCU AYAĞA KALKIYOR
-http.listen(3712, '0.0.0.0', () => {
-    console.log("=============================================");
-    console.log("        BEARPAW TELSİZ KULESİ YAYINDA        ");
-    console.log("  Port: 3712 | Frekans dinleniyor...         ");
-    console.log("=============================================");
+// === SUNUCU AYAĞA KALKIYOR (DİNAMİK PORT VE LOGLAMA) ===
+const PORT = process.env.PORT || 3712; 
+
+http.listen(PORT, '0.0.0.0', () => {
+    // 1. Bilgisayarın yerel (Local) IPv4 adresini bulma
+    let localIP = 'localhost';
+    const networkInterfaces = os.networkInterfaces();
+    for (const interfaceName in networkInterfaces) {
+        for (const net of networkInterfaces[interfaceName]) {
+            if (net.family === 'IPv4' && !net.internal) {
+                localIP = net.address;
+            }
+        }
+    }
+
+    // 2. Railway vb. platformların atadığı domain'i yakalama
+    const externalDomain = process.env.RAILWAY_PUBLIC_DOMAIN 
+        ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` 
+        : `Dış domain bulunamadı (Yerel ağdasın)`;
+
+    // 3. Ekrana yazdırma
+    console.log("==================================================");
+    console.log("        BEARPAW TELSİZ KULESİ YAYINDA           ");
+    console.log("==================================================");
+    console.log(`🚪 Dinlenen Port   : ${PORT}`);
+    console.log(`🏠 Yerel IP (Ev)   : http://${localIP}:${PORT}`);
+    console.log(`🌍 Dış Adres (Web) : ${externalDomain}`);
+    console.log("==================================================");
 });
