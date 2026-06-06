@@ -30,12 +30,12 @@ io.on('connection', (socket) => {
     });
 
     // === SES DAĞITIM MOTORU (GARANTİLİ YÖNTEM) ===
-    socket.on('audio_stream', (buffer) => {
-        // C#'taki 'AudioPacket' sınıfına tam oturması için nesne yapısını garantiye alıyoruz
-        socket.broadcast.emit('audio_receive', {
-            senderId: socket.id,
-            buffer: buffer
-        });
+    socket.on('audio_stream', (base64Data) => {
+    // Gelen güvenli Base64 metnini odadaki diğer subaylara aynen fırlatıyoruz
+    socket.broadcast.emit('audio_receive', {
+        senderId: socket.id,
+        buffer: base64Data
+    });
     });
 
     socket.on('disconnect', (reason) => {
